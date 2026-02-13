@@ -6,7 +6,8 @@ import TextContent from '../components/TextContent';
 
 const PLANETS = [
   { name: "Mercury", color: "#A5A5A5", distance: 20, desc: "The Swift Messenger", x: -5, y: 2, model: "/mercury.glb", scale: 0.3 },
-  { name: "Earth", color: "#2271B3", distance: 75, desc: "The Cradle of Life", x: -7, y: -2, model: "/earths.glb", scale: 1.5 },
+  { name: "Venus", color: "#E3BB76", distance: 45, desc: "The Veiled Sister", x: 6, y: -3, model: "/venus.glb", scale: 1.5 },
+  { name: "Earth", color: "#2271B3", distance: 75, desc: "The Cradle of Life", x: -7, y: -2, model: "/venus.glb", scale: 1.5 },
   { name: "Mars", color: "#E27B58", distance: 105, desc: "The Red Frontier", x: 5, y: 4, model: "/venus.glb", scale: 1.5 },
   { name: "Jupiter", color: "#D39C7E", distance: 150, desc: "The Gas Giant", x: -10, y: 0, model: "/venus.glb", scale: 1.5 },
 ];
