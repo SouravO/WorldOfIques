@@ -17,7 +17,7 @@ export default function Footer({ scrollY }) {
                     <div className="mb-6">
                         <a href="#home" className="text-3xl font-bold tracking-wider uppercase">
                             <span className="text-white drop-shadow-lg">World Of</span>
-                            <span className="text-amber-400 ml-2 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]">iQue</span>
+                            <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-500 bg-clip-text text-transparent ml-2 drop-shadow-[0_0_10px_rgba(233,30,140,0.5)]">iQue</span>
                         </a>
                         <p className="text-white/60 text-sm leading-relaxed">
                             Navigating Tomorrow's Innovation Today
@@ -75,7 +75,7 @@ export default function Footer({ scrollY }) {
                                     href={`https://${social}.com`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-8 h-8 rounded-full bg-white/5 border border-amber-400/20 hover:bg-amber-400 hover:border-amber-500 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(251,191,36,0.5)]"
+                                    className="w-8 h-8 rounded-full bg-white/5 border border-pink-500/20 hover:bg-gradient-to-r hover:from-cyan-500 hover:via-pink-500 hover:to-orange-500 hover:border-pink-500 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(233,30,140,0.5)]"
                                     aria-label={social}
                                 >
                                     <span className="text-white text-xs">

@@ -38,7 +38,7 @@ export default function Navigation({ scrollY }) {
                             className="text-2xl font-bold tracking-wider uppercase z-50 relative"
                         >
                             <span className="text-white drop-shadow-lg">World Of</span>
-                            <span className="text-amber-400 ml-2 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]">iQue</span>
+                            <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-500 bg-clip-text text-transparent ml-2 drop-shadow-[0_0_10px_rgba(233,30,140,0.5)]">iQue</span>
                         </a>
 
                         {/* Desktop Navigation */}
@@ -51,16 +51,16 @@ export default function Navigation({ scrollY }) {
                                         e.preventDefault();
                                         scrollToSection(item.href);
                                     }}
-                                    className="text-sm uppercase tracking-widest text-white/90 hover:text-amber-300 transition-colors duration-300 relative group"
+                                    className="text-sm uppercase tracking-widest text-white/90 hover:text-pink-400 transition-colors duration-300 relative group"
                                 >
                                     {item.label}
-                                    <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-amber-400 to-yellow-500 group-hover:w-full transition-all duration-300" />
+                                    <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-500 group-hover:w-full transition-all duration-300" />
                                 </a>
                             ))}
                         </div>
 
                         {/* CTA Button */}
-                        <button className="hidden md:block px-6 py-2.5 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-600 hover:to-amber-700 text-black text-sm uppercase tracking-wider font-bold rounded-full transition-all duration-300 hover:shadow-[0_0_25px_rgba(251,191,36,0.6)] hover:scale-105">
+                        <button className="hidden md:block px-6 py-2.5 bg-gradient-to-r from-cyan-500 via-pink-500 to-orange-500 hover:from-cyan-600 hover:via-pink-600 hover:to-orange-600 text-white text-sm uppercase tracking-wider font-bold rounded-full transition-all duration-300 hover:shadow-[0_0_25px_rgba(233,30,140,0.6)] hover:scale-105">
                             Get Started
                         </button>
 
@@ -114,7 +114,7 @@ export default function Navigation({ scrollY }) {
                                 {item.label}
                             </a>
                         ))}
-                        <button className="mt-4 px-8 py-3 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 text-black text-sm uppercase tracking-wider font-bold rounded-full hover:shadow-[0_0_25px_rgba(251,191,36,0.6)] hover:scale-105 transition-all duration-300">
+                        <button className="mt-4 px-8 py-3 bg-gradient-to-r from-cyan-500 via-pink-500 to-orange-500 text-white text-sm uppercase tracking-wider font-bold rounded-full hover:shadow-[0_0_25px_rgba(233,30,140,0.6)] hover:scale-105 transition-all duration-300">
                             Get Started
                         </button>
                     </div>
@@ -124,7 +124,7 @@ export default function Navigation({ scrollY }) {
             {/* Scroll Progress Bar */}
             <div className="fixed top-0 left-0 right-0 h-1 bg-transparent z-[201] pointer-events-none">
                 <div
-                    className="h-full bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 transition-all duration-100 shadow-[0_0_10px_rgba(251,191,36,0.5)]"
+                    className="h-full bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-500 transition-all duration-100 shadow-[0_0_10px_rgba(233,30,140,0.5)]"
                     style={{ width: `${Math.min((scrollY / 10000) * 100, 100)}%` }}
                 />
             </div>

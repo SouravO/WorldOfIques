@@ -16,11 +16,11 @@ export default function BackToTop({ scrollY }) {
     return (
         <button
             onClick={scrollToTop}
-            className="fixed bottom-8 right-8 z-[150] w-14 h-14 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 hover:from-amber-500 hover:via-yellow-600 hover:to-amber-700 rounded-full shadow-lg hover:shadow-[0_0_35px_rgba(251,191,36,0.8)] transition-all duration-300 hover:scale-110 flex items-center justify-center group"
+            className="fixed bottom-8 right-8 z-[150] w-14 h-14 bg-gradient-to-r from-cyan-500 via-pink-500 to-orange-500 hover:from-cyan-600 hover:via-pink-600 hover:to-orange-600 rounded-full shadow-lg hover:shadow-[0_0_35px_rgba(233,30,140,0.8)] transition-all duration-300 hover:scale-110 flex items-center justify-center group"
             aria-label="Back to top"
         >
             <svg
-                className="w-6 h-6 text-black group-hover:-translate-y-1 transition-transform font-bold"
+                className="w-6 h-6 text-white group-hover:-translate-y-1 transition-transform"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2.5}

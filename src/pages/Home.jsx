@@ -241,7 +241,7 @@ export default function SolarSystem3D() {
       <Hero scrollY={scrollY} />
 
       {/* Footer */}
-      <Footer scrollY={scrollY} />
+      {/* <Footer scrollY={scrollY} /> */}
 
       {/* Back to Top Button */}
       <BackToTop scrollY={scrollY} />
