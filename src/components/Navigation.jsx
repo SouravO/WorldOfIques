@@ -25,7 +25,7 @@ export default function Navigation({ scrollY }) {
         <>
             {/* Navigation Bar */}
             <nav
-               
+
             >
                 <div className="max-w-7xl mx-auto px-6 py-4">
                     <div className="flex items-center justify-between">
@@ -116,14 +116,6 @@ export default function Navigation({ scrollY }) {
                     </div>
                 </div>
             </nav>
-
-            {/* Scroll Progress Bar */}
-            <div className="fixed top-0 left-0 right-0 h-1 bg-transparent z-[201] pointer-events-none">
-                <div
-                    className="h-full bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-500 transition-all duration-100 shadow-[0_0_10px_rgba(233,30,140,0.5)]"
-                    style={{ width: `${Math.min((scrollY / 10000) * 100, 100)}%` }}
-                />
-            </div>
         </>
     );
 }
