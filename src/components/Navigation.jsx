@@ -25,10 +25,7 @@ export default function Navigation({ scrollY }) {
         <>
             {/* Navigation Bar */}
             <nav
-                className={`fixed top-0 left-0 right-0 z-[200] transition-all duration-500 ${isScrolled
-                    ? 'bg-black/40 backdrop-blur-xl border-b border-white/10 shadow-lg'
-                    : 'bg-transparent'
-                    }`}
+               
             >
                 <div className="max-w-7xl mx-auto px-6 py-4">
                     <div className="flex items-center justify-between">
@@ -37,8 +34,7 @@ export default function Navigation({ scrollY }) {
                             href="#home"
                             className="text-2xl font-bold tracking-wider uppercase z-50 relative"
                         >
-                            <span className="text-white drop-shadow-lg">World Of</span>
-                            <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-500 bg-clip-text text-transparent ml-2 drop-shadow-[0_0_10px_rgba(233,30,140,0.5)]">iQue</span>
+                            <img src="public/logos.png" alt="logo" width={200} />
                         </a>
 
                         {/* Desktop Navigation */}

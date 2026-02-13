@@ -33,7 +33,7 @@ export default function LoadingScreen({ onComplete }) {
                 <div className="mb-12">
                     <h1 className="text-6xl md:text-7xl font-black tracking-tighter uppercase mb-2">
                         <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">World Of</span>
-                        <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-500 bg-clip-text text-transparent ml-2 drop-shadow-[0_0_30px_rgba(233,30,140,0.5)]">iQue</span>
+                        <span className="bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-500 bg-clip-text text-transparent ml-2 drop-shadow-[0_0_30px_rgba(233,30,140,0.5)]">iQuaae</span>
                     </h1>
                     <p className="text-sm uppercase tracking-[0.5em] text-pink-200/60">
                         Loading Experience

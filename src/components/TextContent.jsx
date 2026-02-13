@@ -1,181 +1,267 @@
 import React, { useEffect, useMemo } from 'react';
 import { Html } from '@react-three/drei';
 
-// --- COMPONENT: Floating 3D Prism (Section 2) ---
-const FloatingPrism = ({ scrollY, start, end }) => {
+// --- COMPONENT: 3D Depth HUD (Section 2) ---
+const DepthHUD = ({ scrollY, start, end }) => {
   const progress = Math.min(Math.max((scrollY - start) / (end - start), 0), 1);
-  const xPos = Math.sin(progress * Math.PI * 4) * 35; // More oscillations
-  
+  const buildNationsScale = 1 + progress * 5;
+  const buildNationsOpacity = 1 - Math.pow(progress, 2);
+  const throughVenturesScale = 0.5 + progress * 0.5;
+  const throughVenturesOpacity = Math.max(0, (progress - 0.5) * 2);
+
   return (
-    <div 
-      className="absolute w-72 h-72 border-4 border-cyan-400 shadow-[0_0_50px_rgba(34,211,238,0.5)] bg-gradient-to-br from-cyan-500/20 to-purple-500/20 backdrop-blur-md"
-      style={{
-        left: `calc(50% + ${xPos}%)`,
-        top: '40%',
-        transform: `translate(-50%, -50%) rotateX(${scrollY * 0.4}deg) rotateY(${scrollY * 0.7}deg) scale(${1 + Math.sin(progress * 10) * 0.2})`,
-        clipPath: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
-      }}
-    />
+    <div className="relative w-full h-full flex items-center justify-center overflow-hidden perspective-1000">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 w-full h-1/4 bg-[linear-gradient(to_bottom,rgba(34,211,238,0.1),transparent)] opacity-20" 
+             style={{ transform: `perspective(500px) rotateX(-60deg) translateY(${progress * -100}px)` }} />
+        <div className="absolute bottom-0 w-full h-1/4 bg-[linear-gradient(to_top,rgba(34,211,238,0.1),transparent)] opacity-20" 
+             style={{ transform: `perspective(500px) rotateX(60deg) translateY(${progress * 100}px)` }} />
+      </div>
+
+      <div className="absolute transition-transform duration-100 ease-out flex flex-col items-center"
+           style={{ 
+             transform: `translateZ(${progress * 500}px) scale(${buildNationsScale})`,
+             opacity: buildNationsOpacity,
+             filter: `blur(${progress * 10}px)`
+           }}>
+        <p className="text-[10px] tracking-[1.5em] text-cyan-400 mb-4 font-mono">INITIATING_PROTOCOL</p>
+        <h2 className="text-7xl md:text-9xl font-black tracking-tighter uppercase whitespace-nowrap">BUILD NATIONS</h2>
+      </div>
+
+      <div className="absolute transition-transform duration-100 ease-out flex flex-col items-center"
+           style={{ 
+             transform: `scale(${throughVenturesScale})`,
+             opacity: throughVenturesOpacity,
+             filter: `blur(${(1 - progress) * 10}px)`
+           }}>
+        <h2 className="text-7xl md:text-9xl font-black tracking-tighter uppercase whitespace-nowrap text-cyan-400">THROUGH VENTURES</h2>
+      </div>
+    </div>
   );
 };
 
-// --- COMPONENT: Falling Wealth (Section 4) ---
-const FallingWealth = ({ scrollY, startScroll, endScroll }) => {
-  const items = useMemo(() => {
-    return Array.from({ length: 100 }).map((_, i) => ({
-      id: i,
-      x: Math.random() * 100, 
-      speed: 0.8 + Math.random() * 2, 
-      rotation: Math.random() * 360,
-      type: Math.random() > 0.6 ? 'bill' : Math.random() > 0.3 ? 'coin' : 'diamond',
-    }));
-  }, []);
-
-  const sectionProgress = Math.min(Math.max((scrollY - startScroll) / (endScroll - startScroll), 0), 1);
-  if (sectionProgress <= 0) return null;
+// --- COMPONENT: Structural Rain ---
+const StructuralRain = ({ scrollY, startScroll, endScroll }) => {
+  const sectors = ["ENTREPRENEURS", "STARTUPS", "INVESTORS", "GOVERNMENTS", "NATION BUILDING"];
+  const items = useMemo(() => Array.from({ length: 30 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 90,
+    speed: 2 + Math.random() * 4,
+    text: sectors[i % sectors.length]
+  })), []);
+  const progress = Math.min(Math.max((scrollY - startScroll) / (endScroll - startScroll), 0), 1);
+  if (progress <= 0 || progress >= 1) return null;
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden opacity-30 font-mono text-[10px] tracking-[0.2em]">
       {items.map((item) => {
-        const fallDistance = (scrollY - startScroll) * item.speed;
-        const yPos = (fallDistance % 140) - 20; 
-        const sway = Math.sin(fallDistance / 30) * 6;
-
-        return (
-          <div
-            key={item.id}
-            className="absolute flex items-center justify-center transition-opacity duration-300"
-            style={{
-              left: `${item.x + sway}%`,
-              top: `${yPos}%`,
-              transform: `rotateX(${fallDistance * 0.5}deg) rotateY(${item.rotation + fallDistance * 0.2}deg)`,
-              opacity: yPos > 100 ? 0 : 1,
-            }}
-          >
-            {item.type === 'bill' ? (
-              <div className="w-16 h-8 bg-emerald-400 border-2 border-white/50 rounded-sm shadow-[0_10px_20px_rgba(0,0,0,0.3)] flex items-center justify-center text-[10px] font-bold text-emerald-900">$</div>
-            ) : item.type === 'coin' ? (
-              <div className="w-8 h-8 bg-yellow-400 border-2 border-yellow-200 rounded-full shadow-[0_0_15px_rgba(250,204,21,0.6)]" />
-            ) : (
-              <div className="w-6 h-6 bg-pink-400 rotate-45 border border-white shadow-[0_0_20px_rgba(244,114,182,0.8)]" />
-            )}
-          </div>
-        );
+        const yPos = ((scrollY - startScroll) * item.speed * 0.1) % 120;
+        return <div key={item.id} className="absolute whitespace-nowrap" style={{ left: `${item.x}%`, top: `${yPos - 10}%` }}>[ {item.text} ]</div>;
       })}
     </div>
   );
 };
 
-// --- COMPONENT: Letter-by-Letter Scroll ---
-const ScrollingText = ({ text, scrollY, startScroll, endScroll }) => {
+// --- COMPONENT: Scrolling Text Helper ---
+const ScrollingText = ({ text, scrollY, startScroll, endScroll, className }) => {
   const characters = text.split("");
-  const totalChars = characters.length;
-
   return (
-    <>
+    <span className={className}>
       {characters.map((char, i) => {
-        const charStart = startScroll + (i / totalChars) * (endScroll - startScroll);
-        const charEnd = charStart + 200; 
-        const colorProgress = Math.min(Math.max((scrollY - charStart) / (charEnd - charStart), 0), 1);
-        
+        const charStart = startScroll + (i / characters.length) * (endScroll - startScroll);
+        const colorProgress = Math.min(Math.max((scrollY - charStart) / 300, 0), 1);
         return (
-          <span 
-            key={i} 
-            className="transition-transform duration-300"
+          <span key={i} className="transition-all duration-500 inline-block"
             style={{ 
-              color: colorProgress > 0.5 ? '#fff' : '#333',
-              textShadow: colorProgress > 0.8 ? '0 0 20px rgba(255,255,255,0.8)' : 'none',
-              filter: `blur(${Math.max(0, 15 - colorProgress * 15)}px)`,
-              display: 'inline-block',
-              transform: `translateY(${10 - colorProgress * 10}px)`,
+              opacity: colorProgress,
+              filter: `blur(${(1 - colorProgress) * 10}px)`,
+              transform: `translateY(${(1 - colorProgress) * 10}px)`,
               whiteSpace: char === " " ? "pre" : "normal"
-            }}
-          >
-            {char}
-          </span>
+            }}>{char}</span>
         );
       })}
-    </>
+    </span>
+  );
+};
+
+// --- NEW COMPONENT: THE SOVEREIGN CORE (Section 6) ---
+const SovereignCore = ({ scrollY, start, end }) => {
+  const progress = Math.min(Math.max((scrollY - start) / (end - start), 0), 1);
+  
+  return (
+    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+      {/* 3D Rotating Typography Ring */}
+      <div 
+        className="absolute w-[800px] h-[800px] border border-cyan-400/20 rounded-full flex items-center justify-center"
+        style={{ 
+          transform: `perspective(1000px) rotateX(70deg) rotateZ(${scrollY * 0.05}deg) scale(${1 + progress})`,
+          opacity: 0.3
+        }}
+      >
+        <div className="absolute inset-0 border-4 border-dashed border-cyan-400/10 rounded-full animate-spin-slow" />
+      </div>
+
+      {/* Central Monolith Text */}
+      <div className="relative z-10 flex flex-col items-center">
+        <h2 className="text-[12vw] font-black tracking-tighter italic transition-transform duration-700"
+            style={{ 
+              transform: `scale(${1 - progress * 0.5})`,
+              filter: `drop-shadow(0 0 20px rgba(34,211,238,${progress}))`
+            }}>
+          IQUE
+        </h2>
+        <div className="h-[1px] bg-cyan-400 transition-all duration-1000" style={{ width: `${progress * 300}px` }} />
+        <p className="mt-4 font-mono text-[10px] tracking-[1.5em] text-cyan-400 opacity-60">SOVEREIGN_SYSTEM_ONLINE</p>
+      </div>
+
+      {/* Floating Data Nodes Passing the Camera */}
+      {[...Array(20)].map((_, i) => (
+        <div key={i} className="absolute font-mono text-[9px] text-white/40"
+             style={{ 
+               left: `${(i * 137) % 100}%`, 
+               top: `${(i * 113) % 100}%`,
+               transform: `translateZ(${progress * 1000}px)`,
+               opacity: progress > 0.5 ? 1 - progress : progress
+             }}>
+          {`>> CORE_VAL_0${i}`}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// --- NEW COMPONENT: THE DATA HORIZON FOOTER (Section 7) ---
+const DataHorizonFooter = ({ scrollY, start }) => {
+  const progress = Math.min(Math.max((scrollY - start) / 1000, 0), 1);
+  
+  return (
+    <div className="relative w-full h-full flex flex-col items-center justify-center bg-black overflow-hidden px-10">
+      {/* Background Perspective Grid */}
+      <div className="absolute bottom-0 w-full h-full opacity-20 pointer-events-none"
+           style={{ 
+             background: `linear-gradient(to top, #22d3ee 1px, transparent 1px), linear-gradient(to right, #22d3ee 1px, transparent 1px)`,
+             backgroundSize: '100px 100px',
+             transform: `perspective(500px) rotateX(60deg) translateY(${progress * 200}px)`,
+             maskImage: 'linear-gradient(to bottom, transparent, black)'
+           }} />
+
+      {/* Interactive Outward Links */}
+      <div className="relative z-20 flex flex-col items-center gap-6">
+        {['INSTAGRAM', 'LINKEDIN', 'X-TWITTER', 'MANIFESTO'].map((link, i) => (
+          <a key={link} href="#" 
+             className="group pointer-events-auto overflow-hidden"
+             style={{ 
+               transform: `translateY(${(1 - progress) * (100 * (i + 1))}px)`,
+               opacity: progress 
+             }}>
+            <span className="block text-5xl md:text-8xl font-black tracking-tight transition-all duration-500 group-hover:tracking-[0.1em] group-hover:text-cyan-400">
+              {link}
+            </span>
+            <div className="h-[2px] w-full bg-white/10 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500 group-hover:bg-cyan-400" />
+          </a>
+        ))}
+      </div>
+
+      {/* Exit Meta Data */}
+      <div className="absolute bottom-10 w-full px-10 md:px-20 flex justify-between items-end font-mono text-[8px] tracking-widest opacity-40 uppercase">
+        <div className="space-y-2">
+          <p>Location: Dubai / 25.2048° N</p>
+          <p>Protocol: WOI_SECURE_v4</p>
+        </div>
+        <div className="text-right">
+          <p>Created by Architect 01</p>
+          <p>©️ 2026 WORLD OF IQUE</p>
+        </div>
+      </div>
+
+      {/* Massive Background "IQUE" */}
+      <h2 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] font-black opacity-[0.02] pointer-events-none transition-transform duration-1000"
+          style={{ transform: `translate(-50%, -50%) scale(${0.5 + progress * 0.5})` }}>
+        IQUE
+      </h2>
+    </div>
   );
 };
 
 export default function TextContent({ scrollY }) {
-  // --- SECTION TIMINGS ---
-  const sec1Opacity = Math.min(Math.max((scrollY - 4000) / 500, 0), 1) * Math.min(Math.max((7800 - scrollY) / 500, 0), 1);
-  
-  const sec2Start = 8000;
-  const sec2End = 15000;
-  const sec2Opacity = Math.min(Math.max((scrollY - sec2Start) / 800, 0), 1) * Math.min(Math.max((16000 - scrollY) / 800, 0), 1);
-  
-  const sec4Start = 16500;
-  const sec4End = 20500;
-  const sec4Opacity = Math.min(Math.max((scrollY - sec4Start) / 800, 0), 1) * Math.min(Math.max((21000 - scrollY) / 800, 0), 1);
-  
-  const sec5Start = 21500;
-  const sec5Opacity = Math.min(Math.max((scrollY - sec5Start) / 800, 0), 1);
-  const singProgress = Math.max(0, (scrollY - sec5Start) / 3000);
+  const getAlpha = (s, e) => Math.min(Math.max((scrollY - s) / 600, 0), 1) * Math.min(Math.max((e - scrollY) / 600, 0), 1);
 
   useEffect(() => {
-    document.body.style.height = "28000px"; 
+    document.body.style.height = "32000px";
+    document.body.style.backgroundColor = "#080808";
     return () => { document.body.style.height = "auto"; };
   }, []);
 
-  const getSec2Text = () => {
-    if (scrollY < 10500) return "DOPAMINE HIT";
-    if (scrollY < 13000) return "LIQUID ASSETS";
-    return "CHASE THE GLOW";
-  };
-
   return (
     <Html fullscreen>
-      <div className="w-screen h-screen font-sans text-white overflow-hidden pointer-events-none select-none">
+      <div className="w-screen h-screen text-white overflow-hidden pointer-events-none select-none font-light">
         
-        {/* SECTION 1: Minimalist Glitch */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black" style={{ opacity: sec1Opacity, display: sec1Opacity <= 0 ? 'none' : 'flex' }}>
-            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#333_1px,transparent_1px)] [background-size:20px_20px]" />
-            <p className="text-6xl md:text-8xl text-center px-10 font-black tracking-tighter uppercase italic">
-              <ScrollingText text="LOGIC IS A GHOST." scrollY={scrollY} startScroll={4500} endScroll={6500} />
+        {/* SECTION 1: THE MANIFESTO */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black" 
+             style={{ opacity: getAlpha(4000, 8000) }}>
+          <p className="text-6xl md:text-8xl text-center px-10 tracking-tighter uppercase italic font-normal">
+            <ScrollingText text="LOGIC IS A GHOST." scrollY={scrollY} startScroll={4500} endScroll={6500} />
+          </p>
+          <p className="mt-8 text-cyan-400 font-mono text-xs tracking-[0.5em] opacity-50">WORLD OF IQUE // 2026</p>
+        </div>
+
+        {/* SECTION 2: THE 3D TUNNEL */}
+        <div className="absolute inset-0 bg-black" 
+             style={{ opacity: getAlpha(8500, 16000) }}>
+          <DepthHUD scrollY={scrollY} start={8500} end={16000} />
+        </div>
+
+        {/* SECTION 4: THE FOUR PILLARS */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0a0a0a]" 
+             style={{ opacity: getAlpha(17000, 22000) }}>
+          <StructuralRain scrollY={scrollY} startScroll={17000} endScroll={22000} />
+          <div className="grid grid-cols-2 gap-20 max-w-4xl z-20 opacity-80">
+            <div className="border-l border-cyan-400/30 pl-6 pointer-events-auto cursor-pointer group">
+              <h3 className="text-cyan-400 text-xs tracking-widest mb-2 transition-transform group-hover:translate-x-2">01 / LEADERS</h3>
+              <p className="text-3xl font-black italic uppercase tracking-tighter">CEO Square</p>
+            </div>
+            <div className="border-l border-white/30 pl-6 pointer-events-auto cursor-pointer group">
+              <h3 className="text-white text-xs tracking-widest mb-2 transition-transform group-hover:translate-x-2">02 / CAPITAL</h3>
+              <p className="text-3xl font-black italic uppercase tracking-tighter">VC Circle</p>
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 5: PHILOSOPHY */}
+        <div className="absolute inset-0 flex items-center px-20 bg-black" 
+             style={{ opacity: getAlpha(23000, 26500) }}>
+          <div className="max-w-4xl">
+            <p className="text-cyan-400 font-mono text-xs tracking-[1em] mb-10 opacity-50">/ ARCHITECTURE</p>
+            <p className="text-4xl md:text-6xl font-light leading-tight tracking-tight italic">
+              “Entrepreneurs are the architects who <span className="text-cyan-400 font-bold not-italic">redraw sovereign borders</span> through innovation.”
             </p>
+          </div>
         </div>
 
-        {/* SECTION 2: The Funky Prism */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-indigo-950" style={{ opacity: sec2Opacity, display: sec2Opacity <= 0 ? 'none' : 'flex' }}>
-          {/* Background scanlines */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%]" />
-          
-          <FloatingPrism scrollY={scrollY} start={sec2Start} end={sec2End} />
-          
-          <h2 className="relative z-20 text-8xl font-black tracking-[10px] uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500 animate-pulse">
-            {getSec2Text()}
-          </h2>
+        {/* SECTION 6: THE SOVEREIGN CORE (REPLACED SCANNER) */}
+        <div className="absolute inset-0 bg-[#050505]" 
+             style={{ opacity: getAlpha(27000, 30500) }}>
+          <SovereignCore scrollY={scrollY} start={27000} end={30500} />
         </div>
 
-        {/* SECTION 4: The Rain */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#050505]" style={{ opacity: sec4Opacity, display: sec4Opacity <= 0 ? 'none' : 'flex' }}>
-          <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/20 to-transparent" />
-          <FallingWealth scrollY={scrollY} startScroll={sec4Start} endScroll={sec4End} />
-          <h2 className="text-[15vw] font-black italic tracking-tighter mix-blend-overlay opacity-50">GET PAID</h2>
-          <h2 className="absolute text-8xl font-black italic skew-x-12 border-4 border-white px-8 py-2">REWARDS</h2>
-        </div>
-
-        {/* SECTION 5: The Singularity */}
-        <div className="absolute inset-0 flex items-center justify-center bg-white" style={{ opacity: sec5Opacity, display: sec5Opacity <= 0 ? 'none' : 'flex' }}>
-          <div 
-            className="absolute rounded-full transition-all duration-100 ease-out"
-            style={{
-              width: `${100 + singProgress * 1500}px`,
-              height: `${100 + singProgress * 1500}px`,
-              background: 'radial-gradient(circle, #000 0%, #ff0055 40%, #5500ff 80%, #fff 100%)',
-              filter: `blur(${10 + singProgress * 40}px)`,
-              transform: `rotate(${scrollY * 0.1}deg)`,
-            }}
-          />
-          <h2 className="relative z-10 text-[12vw] font-black italic mix-blend-difference uppercase tracking-tighter leading-none text-center">
-            END <br/> GAME
-          </h2>
+        {/* SECTION 7: THE DATA HORIZON FOOTER (REPLACED) */}
+        <div className="absolute inset-0" 
+             style={{ opacity: Math.min(Math.max((scrollY - 30500) / 500, 0), 1) }}>
+          <DataHorizonFooter scrollY={scrollY} start={30500} />
         </div>
 
       </div>
+
+      <style>{`
+        .perspective-1000 { perspective: 1000px; }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 12s linear infinite;
+        }
+      `}</style>
     </Html>
   );
 }

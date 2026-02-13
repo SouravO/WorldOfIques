@@ -17,9 +17,9 @@ const PLANETS = [
     distance: 45,
     desc: "Create Leaders",
     tagline: "Founder grooming, mindset development, leadership networks",
-    x: 6, y: -3,
+    x: 3, y: -3,
     model: "/venus.glb", // Reusing existing model for now
-    scale: 1.8,
+    scale: 5.8,
     route: "/entrepreneurs",
     projects: [
       { name: "CEO Square", desc: "Executive Leadership Platform", url: "https://example.com" },
@@ -36,7 +36,7 @@ const PLANETS = [
     tagline: "Incubation, growth acceleration, franchise expansion",
     x: -7, y: -2,
     model: "/eart.glb",
-    scale: 4.2,
+    scale: 9.2,
     route: "/startups",
     projects: [
       { name: "Incubenation", desc: "Startup Incubation Hub", url: "https://example.com" },
@@ -50,9 +50,9 @@ const PLANETS = [
     distance: 105,
     desc: "Structure Capital",
     tagline: "Deal flow access, investor networking, structured capital",
-    x: 5, y: 1,
+    x: 8, y: -7,
     model: "/mars.glb",
-    scale: 3.8,
+    scale: 5.8,
     route: "/investors",
     projects: [
       { name: "Investor Cafe", desc: "Deal Flow Network", url: "https://example.com" },
@@ -66,7 +66,7 @@ const PLANETS = [
     distance: 150,
     desc: "Build Infrastructure",
     tagline: "Innovation zones, infrastructure design, public-private partnerships",
-    x: -10, y: 0,
+    x: -10, y: -1,
     model: "/jupiter.glb",
     scale: 3.5,
     route: "/governments",
@@ -98,6 +98,11 @@ function Planet({ planet, onPlanetClick }) {
   // Load GLB model if planet has model property
   const gltf = planet.model ? useGLTF(planet.model) : null;
 
+  // Clone scene only once to prevent rotation reset on re-renders
+  const planetScene = useMemo(() => {
+    return gltf ? gltf.scene.clone() : null;
+  }, [gltf]);
+
   if (texture) {
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.wrapS = THREE.RepeatWrapping;
@@ -107,7 +112,7 @@ function Planet({ planet, onPlanetClick }) {
   }
 
   useFrame((state, delta) => {
-    // Rotate the entire group for GLB models, or just the sphere for textures
+    // Rotate on Y-axis only (like earth.glb)
     if (planet.model && groupRef.current) {
       groupRef.current.rotation.y += delta * 0.5;
       // Add hover scale effect
@@ -125,38 +130,36 @@ function Planet({ planet, onPlanetClick }) {
 
   return (
     <group position={[planet.x, planet.y, -planet.distance]}>
-      <Float speed={1.5} rotationIntensity={0} floatIntensity={0.5}>
-        <group
-          onClick={(e) => {
-            e.stopPropagation();
-            onPlanetClick?.(planet);
-          }}
-          onPointerOver={(e) => { e.stopPropagation(); setHovered(true); }}
-          onPointerOut={(e) => { e.stopPropagation(); setHovered(false); }}
-        >
-          {planet.model && gltf ? (
-            // Render GLB model
-            <primitive
-              ref={groupRef}
-              object={gltf.scene.clone()}
-              scale={planet.scale || 1.5}
-            />
-          ) : (
-            // Render sphere with texture or color
-            <Sphere ref={meshRef} args={[1.5, 64, 64]}>
-              {texture ? (
-                <meshBasicMaterial
-                  map={texture}
-                  side={THREE.DoubleSide}
-                  transparent={true}
-                />
-              ) : (
-                <meshStandardMaterial color={planet.color} />
-              )}
-            </Sphere>
-          )}
-        </group>
-      </Float>
+      <group
+        onClick={(e) => {
+          e.stopPropagation();
+          onPlanetClick?.(planet);
+        }}
+        onPointerOver={(e) => { e.stopPropagation(); setHovered(true); }}
+        onPointerOut={(e) => { e.stopPropagation(); setHovered(false); }}
+      >
+        {planet.model && planetScene ? (
+          // Render GLB model
+          <primitive
+            ref={groupRef}
+            object={planetScene}
+            scale={planet.scale || 1.5}
+          />
+        ) : (
+          // Render sphere with texture or color
+          <Sphere ref={meshRef} args={[1.5, 64, 64]}>
+            {texture ? (
+              <meshBasicMaterial
+                map={texture}
+                side={THREE.DoubleSide}
+                transparent={true}
+              />
+            ) : (
+              <meshStandardMaterial color={planet.color} />
+            )}
+          </Sphere>
+        )}
+      </group>
 
       <Html distanceFactor={15} position={[0, -2.5, 0]} center>
         <div
@@ -186,7 +189,7 @@ function GiantSun({ scrollY }) {
   const opacity = Math.min(0.15 + (scrollY / 2000) * 0.85, 1);
   const intensity = Math.min(2 + (scrollY / 2000) * 8, 10);
 
-  const gltf = useGLTF('/sun.glb');
+  const gltf = useGLTF('/sunstar.glb');
   const groupRef = useRef();
 
   // Clone scene only once
@@ -206,7 +209,7 @@ function GiantSun({ scrollY }) {
       <primitive
         ref={groupRef}
         object={sunScene}
-        scale={15}
+        scale={7}
       />
       <pointLight intensity={intensity} distance={1000} color="#ffcc00" />
     </group>
@@ -251,7 +254,7 @@ export default function SolarSystem3D() {
           <color attach="background" args={['#000000']} />
           <fog attach="fog" args={['#000000', 50, 600]} />
           <ambientLight intensity={1.5} />
-          <Stars radius={100} depth={50} count={7000} factor={4} saturation={0} fade speed={1} />
+          <Stars radius={100} depth={50} count={7000} factor={4} saturation={0} fade speed={0} />
           <Suspense fallback={null}>
             <Rig scrollY={scrollY} />
             <GiantSun scrollY={scrollY} />
