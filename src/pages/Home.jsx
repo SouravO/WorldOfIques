@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, Suspense } from 'react';
+import React, { useRef, useState, useEffect, Suspense, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Sphere, Stars, Float, Html, MeshDistortMaterial, useTexture, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
@@ -97,23 +97,12 @@ function GiantSun({ scrollY }) {
   const gltf = useGLTF('/sun.glb');
   const groupRef = useRef();
 
-  // Apply emissive material to all meshes in the sun model
-  useEffect(() => {
-    if (gltf.scene) {
-      gltf.scene.traverse((child) => {
-        if (child.isMesh) {
-          child.material = new THREE.MeshStandardMaterial({
-            color: '#ff8800',
-            emissive: '#ff4400',
-            emissiveIntensity: intensity,
-            transparent: true,
-            opacity: opacity,
-          });
-        }
-      });
-    }
-  }, [gltf.scene, opacity, intensity]);
+  // Clone scene only once
+  const sunScene = useMemo(() => {
+    return gltf.scene.clone();
+  }, [gltf.scene]);
 
+  // Update rotation
   useFrame((state, delta) => {
     if (groupRef.current) {
       groupRef.current.rotation.y += delta * 0.1; // Slow rotation
@@ -124,7 +113,7 @@ function GiantSun({ scrollY }) {
     <group position={[0, 0, -400]}>
       <primitive
         ref={groupRef}
-        object={gltf.scene.clone()}
+        object={sunScene}
         scale={15}
       />
       <pointLight intensity={intensity} distance={1000} color="#ffcc00" />
