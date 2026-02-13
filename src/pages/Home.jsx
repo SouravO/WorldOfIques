@@ -7,9 +7,9 @@ import TextContent from '../components/TextContent';
 const PLANETS = [
   { name: "Mercury", color: "#A5A5A5", distance: 20, desc: "The Swift Messenger", x: -5, y: 2, model: "/mercury.glb", scale: 0.3 },
   { name: "Venus", color: "#E3BB76", distance: 45, desc: "The Veiled Sister", x: 6, y: -3, model: "/venus.glb", scale: 1.5 },
-  { name: "Earth", color: "#2271B3", distance: 75, desc: "The Cradle of Life", x: -7, y: -2, model: "/venus.glb", scale: 1.5 },
-  { name: "Mars", color: "#E27B58", distance: 105, desc: "The Red Frontier", x: 5, y: 4, model: "/venus.glb", scale: 1.5 },
-  { name: "Jupiter", color: "#D39C7E", distance: 150, desc: "The Gas Giant", x: -10, y: 0, model: "/venus.glb", scale: 1.5 },
+  { name: "Earth", color: "#2271B3", distance: 75, desc: "The Cradle of Life", x: -7, y: -2, model: "/eart.glb", scale: 4.5 },
+  { name: "Mars", color: "#E27B58", distance: 105, desc: "The Red Frontier", x: 5, y: 4, model: "/mars.glb", scale: 1.5 },
+  { name: "Jupiter", color: "#D39C7E", distance: 150, desc: "The Gas Giant", x: -10, y: 0, model: "/jupiter.glb", scale: 1.5 },
 ];
 
 function Rig({ scrollY }) {
@@ -94,20 +94,39 @@ function GiantSun({ scrollY }) {
   const opacity = Math.min(0.15 + (scrollY / 2000) * 0.85, 1);
   const intensity = Math.min(2 + (scrollY / 2000) * 8, 10);
 
+  const gltf = useGLTF('/sun.glb');
+  const groupRef = useRef();
+
+  // Apply emissive material to all meshes in the sun model
+  useEffect(() => {
+    if (gltf.scene) {
+      gltf.scene.traverse((child) => {
+        if (child.isMesh) {
+          child.material = new THREE.MeshStandardMaterial({
+            color: '#ff8800',
+            emissive: '#ff4400',
+            emissiveIntensity: intensity,
+            transparent: true,
+            opacity: opacity,
+          });
+        }
+      });
+    }
+  }, [gltf.scene, opacity, intensity]);
+
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.1; // Slow rotation
+    }
+  });
+
   return (
-    <group position={[0, 0, -200]}>
-      <Sphere args={[40, 64, 64]}>
-        <MeshDistortMaterial
-          color="#ff8800"
-          speed={2}
-          distort={0.4}
-          radius={1}
-          emissive="#ff4400"
-          emissiveIntensity={intensity}
-          opacity={opacity}
-          transparent={true}
-        />
-      </Sphere>
+    <group position={[0, 0, -400]}>
+      <primitive
+        ref={groupRef}
+        object={gltf.scene.clone()}
+        scale={15}
+      />
       <pointLight intensity={intensity} distance={1000} color="#ffcc00" />
     </group>
   );
