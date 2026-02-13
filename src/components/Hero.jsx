@@ -14,7 +14,7 @@ export default function Hero({ scrollY }) {
                 <h1 className="text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter uppercase mb-6 leading-none">
                     <span className="block text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">World Of</span>
                     <span className="block bg-gradient-to-r from-cyan-400 via-pink-500 to-orange-500 bg-clip-text text-transparent drop-shadow-[0_0_50px_rgba(233,30,140,0.5)]">
-                        iQueaaa
+                        iQue
                     </span>
                 </h1>
 
