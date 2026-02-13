@@ -36,7 +36,7 @@ const PLANETS = [
     tagline: "Incubation, growth acceleration, franchise expansion",
     x: -7, y: -2,
     model: "/eart.glb",
-    scale: 2.2,
+    scale: 4.2,
     route: "/startups",
     projects: [
       { name: "Incubenation", desc: "Startup Incubation Hub", url: "https://example.com" },
@@ -50,9 +50,9 @@ const PLANETS = [
     distance: 105,
     desc: "Structure Capital",
     tagline: "Deal flow access, investor networking, structured capital",
-    x: 5, y: 4,
+    x: 5, y: 1,
     model: "/mars.glb",
-    scale: 1.8,
+    scale: 3.8,
     route: "/investors",
     projects: [
       { name: "Investor Cafe", desc: "Deal Flow Network", url: "https://example.com" },
@@ -68,7 +68,7 @@ const PLANETS = [
     tagline: "Innovation zones, infrastructure design, public-private partnerships",
     x: -10, y: 0,
     model: "/jupiter.glb",
-    scale: 2.5,
+    scale: 3.5,
     route: "/governments",
     projects: [
       { name: "Startup Park", desc: "Innovation Zones", url: "https://example.com" },
