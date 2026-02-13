@@ -2,13 +2,14 @@ import React, { useRef, useState, useEffect, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Sphere, Stars, Float, Html, MeshDistortMaterial, useTexture, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import TextContent from '../components/TextContent';
 
 const PLANETS = [
-  { name: "Mercury", color: "#A5A5A5", distance: 20, desc: "The Swift Messenger", x: -5, y: 2, model: "/src/assets/mercury.glb", scale: 0.3 },
-  { name: "Venus", color: "#E3BB76", distance: 45, desc: "The Veiled Sister", x: 6, y: -3, model: "/src/assets/venus.glb", scale: 1.5 },
-  { name: "Earth", color: "#2271B3", distance: 75, desc: "The Cradle of Life", x: -7, y: -2, model: "/src/assets/earth.glb", scale: 1.5 },
-  { name: "Mars", color: "#E27B58", distance: 105, desc: "The Red Frontier", x: 5, y: 4, model: "/src/assets/venus.glb", scale: 1.5 },
-  { name: "Jupiter", color: "#D39C7E", distance: 150, desc: "The Gas Giant", x: -10, y: 0, model: "/src/assets/venus.glb", scale: 1.5 },
+  { name: "Mercury", color: "#A5A5A5", distance: 20, desc: "The Swift Messenger", x: -5, y: 2, model: "/mercury.glb", scale: 0.3 },
+  { name: "Venus", color: "#E3BB76", distance: 45, desc: "The Veiled Sister", x: 6, y: -3, model: "/venus.glb", scale: 1.5 },
+  { name: "Earth", color: "#2271B3", distance: 75, desc: "The Cradle of Life", x: -7, y: -2, model: "/earth.glb", scale: 1.5 },
+  { name: "Mars", color: "#E27B58", distance: 105, desc: "The Red Frontier", x: 5, y: 4, model: "/venus.glb", scale: 1.5 },
+  { name: "Jupiter", color: "#D39C7E", distance: 150, desc: "The Gas Giant", x: -10, y: 0, model: "/venus.glb", scale: 1.5 },
 ];
 
 function Rig({ scrollY }) {
@@ -87,13 +88,27 @@ function Planet({ planet }) {
   );
 }
 
-function GiantSun() {
+function GiantSun({ scrollY }) {
+  // Cinematic fade-in: starts faded (0.15) and becomes brighter as you scroll
+  // Fully visible around 2000px scroll
+  const opacity = Math.min(0.15 + (scrollY / 2000) * 0.85, 1);
+  const intensity = Math.min(2 + (scrollY / 2000) * 8, 10);
+
   return (
-    <group position={[0, 0, -350]}>
+    <group position={[0, 0, -200]}>
       <Sphere args={[40, 64, 64]}>
-        <MeshDistortMaterial color="#ff8800" speed={2} distort={0.4} radius={1} emissive="#ff4400" emissiveIntensity={10} />
+        <MeshDistortMaterial
+          color="#ff8800"
+          speed={2}
+          distort={0.4}
+          radius={1}
+          emissive="#ff4400"
+          emissiveIntensity={intensity}
+          opacity={opacity}
+          transparent={true}
+        />
       </Sphere>
-      <pointLight intensity={10} distance={1000} color="#ffcc00" />
+      <pointLight intensity={intensity} distance={1000} color="#ffcc00" />
     </group>
   );
 }
@@ -108,7 +123,7 @@ export default function SolarSystem3D() {
   }, []);
 
   return (
-    <div className="bg-black text-white h-[1000vh] w-full font-sans">
+    <div className="bg-black text-white h-[600vh] w-full font-sans">
       <div className="fixed top-10 left-10 z-[100] pointer-events-none">
         <h1 className="text-4xl font-thin tracking-[0.3em] uppercase">
           Ique <span className="font-bold text-orange-500">Cosmos</span>
@@ -122,12 +137,13 @@ export default function SolarSystem3D() {
       <div className="fixed inset-0 z-0">
         <Canvas camera={{ position: [0, 0, 50], fov: 60 }}>
           <color attach="background" args={['#000000']} />
-          <fog attach="fog" args={['#000000', 50, 400]} />
+          <fog attach="fog" args={['#000000', 50, 600]} />
           <ambientLight intensity={1.5} />
           <Stars radius={100} depth={50} count={7000} factor={4} saturation={0} fade speed={1} />
           <Suspense fallback={null}>
             <Rig scrollY={scrollY} />
-            <GiantSun />
+            <GiantSun scrollY={scrollY} />
+            <TextContent scrollY={scrollY} />
             {PLANETS.map((planet) => (
               <Planet key={planet.name} planet={planet} />
             ))}
