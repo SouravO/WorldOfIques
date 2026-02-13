@@ -32,7 +32,12 @@ export default function Navigation({ scrollY }) {
                         {/* Logo */}
                         <a
                             href="#home"
-                            className="text-2xl font-bold tracking-wider uppercase z-50 relative"
+                            className="text-2xl font-bold tracking-wider uppercase z-50 absolute left-4 top-8 transition-all duration-500"
+                            style={{
+                                opacity: Math.max(1 - (scrollY / 300), 0),
+                                transform: `translateY(${Math.min(scrollY / 10, -20)}px)`,
+                                pointerEvents: scrollY > 300 ? 'none' : 'auto'
+                            }}
                         >
                             <img src="public/logos.png" alt="logo" width={200} />
                         </a>
@@ -61,7 +66,7 @@ export default function Navigation({ scrollY }) {
                         </button>
 
                         {/* Mobile Menu Button */}
-                        <button
+                        {/* <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             className="md:hidden z-50 relative w-8 h-8 flex flex-col justify-center items-center"
                             aria-label="Toggle menu"
@@ -82,7 +87,7 @@ export default function Navigation({ scrollY }) {
                                     : 'rotate-0 translate-y-0'
                                     }`}
                             />
-                        </button>
+                        </button> */}
                     </div>
                 </div>
 
